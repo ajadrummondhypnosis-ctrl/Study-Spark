@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudySpark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F2F7FB;
+    --surface:#FFFFFF;
+    --ink:#16263D;
+    --ink-soft:#5E7187;
+    --ink-faint:#94A6B8;
+    --blue:#2F6FED;
+    --blue-soft:#E7EFFE;
+    --teal:#15B8A6;
+    --teal-soft:#E1F8F4;
+    --accent:#FF8A3D;
+    --accent-soft:#FFEEDF;
+    --accent-deep:#E8651A;
+    --easy:#1FB88B;
+    --medium:#F2A93B;
+    --hard:#F2654D;
+    --line:#E3EAF2;
+    --radius-lg:24px;
+    --radius-md:16px;
+    --radius-sm:10px;
+    --shadow-sm: 0 2px 8px rgba(22,38,61,0.06);
+    --shadow-md: 0 12px 28px rgba(22,38,61,0.10);
+    --shadow-lg: 0 24px 48px rgba(22,38,61,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 8% 0%, rgba(47,111,237,0.07), transparent 45%),
+      radial-gradient(circle at 100% 10%, rgba(255,138,61,0.08), transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter', system-ui, -apple-system, sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{ font-family:'Baloo 2', 'Inter', sans-serif; font-weight:700; }
+  svg.icon{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:block; }
+  main svg, .panel svg{ width:18px; height:18px; flex-shrink:0; vertical-align:-3px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ---------- TOP BAR ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 28px;
+    background:rgba(242,247,251,0.85);
+    backdrop-filter:blur(10px);
+    position:sticky;top:0;z-index:30;
+    border-bottom:1px solid var(--line);
+  }
+  .brand{ display:flex;align-items:center;gap:10px; }
+  .brand-mark{
+    width:38px;height:38px;border-radius:12px;
+    background:linear-gradient(135deg, var(--blue), var(--teal));
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--shadow-sm);
+  }
+  .brand-mark svg{width:21px;height:21px;stroke:#fff;}
+  .brand-name{font-size:21px;letter-spacing:-0.01em;color:var(--ink);}
+  .brand-name span{color:var(--accent-deep);}
+  .streak-pill{
+    display:flex;align-items:center;gap:6px;
+    background:var(--accent-soft);
+    color:var(--accent-deep);
+    border-radius:999px;
+    padding:7px 14px;font-weight:700;font-size:13.5px;
+  }
+  .streak-pill svg{width:16px;height:16px;}
+
+  nav.tabs{
+    display:flex;gap:4px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:5px;
+    box-shadow:var(--shadow-sm);
+  }
+  nav.tabs button{
+    border:none;background:transparent;
+    display:flex;align-items:center;gap:7px;
+    padding:9px 16px;
+    border-radius:999px;
+    font-size:13.5px;font-weight:700;
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition:all .18s ease;
+    font-family:inherit;
+    white-space:nowrap;
+  }
+  nav.tabs button svg{width:17px;height:17px;}
+  nav.tabs button.active{
+    background:linear-gradient(135deg, var(--blue), var(--teal));
+    color:#fff;
+    box-shadow:0 6px 16px rgba(47,111,237,0.30);
+  }
+  nav.tabs button:not(.active):hover{ color:var(--ink); background:var(--bg); }
+  .nav-label{display:inline;}
+
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:28px 24px 90px;
+  }
+  .page-fade{ animation: page-in .4s cubic-bezier(.2,.7,.3,1); }
+  @keyframes page-in{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+  .page-head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    margin-bottom:24px; flex-wrap:wrap; gap:14px;
+  }
+  .page-title{ font-size:30px; margin:0 0 4px; color:var(--ink); }
+  .page-sub{ color:var(--ink-soft); margin:0; font-size:14.5px; }
+
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    border:none;
+    background:var(--ink);
+    color:#fff;
+    padding:11px 20px;
+    border-radius:var(--radius-sm);
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    font-family:inherit;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:var(--shadow-sm);
+  }
+  .btn svg{width:16px;height:16px;}
+  .btn:hover{ transform:translateY(-2px); box-shadow:var(--shadow-md); }
+  .btn:active{ transform:translateY(0); }
+  .btn-ghost{ background:transparent; color:var(--ink); box-shadow:none; border:1.5px solid var(--line); }
+  .btn-ghost:hover{ background:var(--bg); border-color:var(--ink-faint); }
+  .btn-primary{ background:linear-gradient(135deg, var(--blue), #4C8CFF); }
+  .btn-accent{ background:linear-gradient(135deg, var(--accent), var(--accent-deep)); color:#fff; }
+  .btn-teal{ background:linear-gradient(135deg, var(--teal), #20D6BE); color:#fff; }
+  .btn[disabled]{ opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; }
+
+  /* ---------- DASHBOARD ---------- */
+  .greeting-card{
+    background:linear-gradient(120deg, #16263D, #1F3A5F 55%, #1A5A6B);
+    border-radius:var(--radius-lg);
+    padding:32px 34px;
+    color:#fff;
+    box-shadow:var(--shadow-lg);
+    margin-bottom:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .greeting-card::after{
+    content:'';
+    position:absolute; right:-60px; top:-60px;
+    width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle, rgba(255,138,61,0.35), transparent 70%);
+  }
+  .greeting-card h1{ margin:0 0 6px; font-size:28px; position:relative; }
+  .greeting-card p{ margin:0; color:rgba(255,255,255,0.78); font-size:14.5px; position:relative; max-width:480px; }
+
+  .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:16px;
+    margin-bottom:24px;
+  }
+  .stat-card{
+    background:var(--surface);
+    border-radius:var(--radius-md);
+    padding:20px;
+    box-shadow:var(--shadow-sm);
+    border:1px solid var(--line);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .stat-card:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md); }
+  .stat-icon{
+    width:38px;height:38px;border-radius:11px;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:12px;
+  }
+  .stat-icon svg{width:19px;height:19px;}
+  .stat-icon.flame{ background:var(--accent-soft); color:var(--accent-deep); }
+  .stat-icon.trophy{ background:var(--teal-soft); color:var(--teal); }
+  .stat-icon.stack{ background:var(--blue-soft); color:var(--blue); }
+  .stat-icon.target{ background:#FDEFFB; color:#B23FA0; }
+  .stat-num{ font-size:26px; font-weight:800; font-family:'Baloo 2',sans-serif; line-height:1; margin-bottom:4px;}
+  .stat-label{ font-size:12.5px; color:var(--ink-soft); font-weight:600; }
+
+  .goal-ring-wrap{ display:flex; align-items:center; gap:10px; }
+  .goal-ring{ position:relative; width:38px;height:38px; }
+  .goal-ring svg{ transform:rotate(-90deg); width:38px;height:38px; }
+  .goal-ring-track{ stroke:var(--line); stroke-width:5; fill:none; }
+  .goal-ring-fill{ stroke:#B23FA0; stroke-width:5; fill:none; stroke-linecap:round; transition:stroke-dashoffset .6s ease; }
+
+  .dash-row{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap:20px;
+    margin-bottom:24px;
+  }
+  .panel{
+    background:var(--surface);
+    border-radius:var(--radius-lg);
+    padding:24px;
+    box-shadow:var(--shadow-sm);
+    border:1px solid var(--line);
+  }
+  .panel h3{ margin:0 0 4px; font-size:17px; display:flex;align-items:center;gap:8px;}
+  .panel .panel-sub{ margin:0 0 16px; font-size:13px; color:var(--ink-soft); }
+
+  .ai-tip-card{
+    background:linear-gradient(135deg, var(--blue-soft), var(--teal-soft));
+    border:1px solid #D6E6FB;
+    border-radius:var(--radius-lg);
+    padding:22px 24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .ai-tip-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#fff; color:var(--blue);
+    font-size:11.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;
+    padding:5px 11px;border-radius:999px;
+    margin-bottom:12px;
+    box-shadow:var(--shadow-sm);
+  }
+  .ai-tip-badge svg{width:13px;height:13px;}
+  .ai-tip-text{ font-size:15px; line-height:1.6; color:var(--ink); margin:0 0 16px; }
+  .quick-actions{ display:flex; flex-direction:column; gap:10px; }
+  .quick-action{
+    display:flex;align-items:center;gap:12px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-md);
+    padding:14px 16px;
+    cursor:pointer;
+    font-family:inherit;
+    text-align:left;
+    transition:transform .15s ease, border-color .15s ease;
+    width:100%;
+  }
+  .quick-action:hover{ transform:translateX(3px); border-color:var(--blue); }
+  .quick-action .qa-icon{
+    width:36px;height:36px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .quick-action .qa-icon svg{width:17px;height:17px;}
+  .quick-action .qa-text strong{ display:block; font-size:14px; }
+  .quick-action .qa-text span{ font-size:12px; color:var(--ink-soft); }
+
+  /* ---------- SHARED CHIP / TAG ---------- */
+  .chip{
+    padding:6px 14px;
+    border-radius:999px;
+    border:1.5px solid var(--line);
+    background:var(--surface);
+    font-size:12.5px;
+    font-weight:700;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .15s ease;
+  }
+  .chip.active{ background:var(--ink); border-color:var(--ink); color:#fff; }
+  .chip:hover:not(.active){ border-color:var(--blue); color:var(--ink); }
+  .tag{
+    display:inline-block; font-size:11px; font-weight:800;
+    color:var(--teal); background:var(--teal-soft);
+    padding:3px 10px;border-radius:7px; letter-spacing:.01em;
+  }
+
+  /* ---------- NOTES PAGE ---------- */
+  .notes-layout{ display:grid; grid-template-columns: 300px 1fr; gap:22px; }
+  .note-list{ display:flex;flex-direction:column;gap:10px; }
+  .subject-filter{ display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px; }
+  .note-card{
+    background:var(--surface);
+    border:1.5px solid var(--line);
+    border-radius:var(--radius-md);
+    padding:15px;
+    cursor:pointer;
+    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .note-card:hover{ border-color:var(--blue); transform:translateY(-2px); box-shadow:var(--shadow-sm); }
+  .note-card.selected{ border-color:var(--blue); box-shadow:var(--shadow-md); background:var(--blue-soft); }
+  .note-card h4{ margin:8px 0 4px; font-size:15px; }
+  .note-card p{ margin:0;font-size:12.5px;color:var(--ink-soft);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+  .item-count-badge{
+    font-size:10.5px;font-weight:700;color:var(--ink-soft);
+    background:var(--bg);border:1px solid var(--line);
+    padding:2px 8px;border-radius:6px;margin-left:6px;
+  }
+  .note-editor{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    padding:26px;
+    box-shadow:var(--shadow-sm);
+  }
+  .field-row{ display:flex;gap:14px;margin-bottom:16px;flex-wrap:wrap; }
+  .field{ flex:1;min-width:180px;display:flex;flex-direction:column;gap:6px; }
+  .field label{ font-size:11.5px;font-weight:800;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em; }
+  input[type=text], select, textarea{
+    font-family:inherit; border:1.5px solid var(--line); border-radius:var(--radius-sm);
+    padding:11px 13px; font-size:14.5px; color:var(--ink); background:var(--bg);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  input[type=text]:focus, select:focus, textarea:focus{
+    outline:none;border-color:var(--blue); background:#fff;
+    box-shadow:0 0 0 4px var(--blue-soft);
+  }
+  textarea{ resize:vertical;min-height:210px;line-height:1.6; }
+  .editor-actions{ display:flex;justify-content:space-between;align-items:center;margin-top:18px;flex-wrap:wrap;gap:10px; }
+  .editor-actions .left{ display:flex;gap:10px; flex-wrap:wrap; }
+  .empty-state{ text-align:center;padding:64px 20px;color:var(--ink-soft); }
+  .empty-state .big-icon{ width:52px;height:52px;margin:0 auto 14px;color:var(--ink-faint); }
+  .empty-state .big-icon svg{ width:100%;height:100%; }
+
+  .hint-banner{
+    display:flex;align-items:flex-start;gap:10px;
+    background:var(--teal-soft); border:1px solid #BCEEE3;
+    border-radius:var(--radius-md); padding:12px 16px;
+    font-size:13px;color:var(--ink); margin-bottom:16px; line-height:1.55;
+  }
+  .hint-banner svg{ width:17px;height:17px; color:var(--teal); flex-shrink:0; margin-top:1px; }
+  .modal-section.content{
+    background:var(--bg); border:1.5px dashed var(--line); border-radius:var(--radius-md);
+    padding:14px 16px; font-size:14.5px;line-height:1.6; white-space:pre-wrap;
+  }
+  .link-row{ display:flex;gap:10px;flex-wrap:wrap;margin-top:14px; }
+  .btn-link{
+    border:1.5px dashed var(--line); background:var(--surface); color:var(--ink-soft);
+    padding:8px 15px;border-radius:var(--radius-sm); font-size:12.5px;font-weight:700;
+    cursor:pointer;font-family:inherit; display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn-link svg{ width:14px;height:14px; }
+  .btn-link:hover{ border-color:var(--blue); color:var(--ink); border-style:solid; }
+
+  /* ---------- STUDY ITEMS PAGE ---------- */
+  .search-row{ display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap; position:relative; }
+  .search-row input{ flex:1;min-width:240px; padding-left:42px; }
+  .search-row svg{ position:absolute; left:14px; top:50%; transform:translateY(-50%); width:18px;height:18px; color:var(--ink-faint); }
+  .grid-items{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
+  .item-card{
+    background:var(--surface); border:1.5px solid var(--line); border-radius:var(--radius-md);
+    padding:18px; cursor:pointer; transition:transform .15s ease,border-color .15s ease, box-shadow .15s ease;
+  }
+  .item-card:hover{ transform:translateY(-3px); border-color:var(--blue); box-shadow:var(--shadow-md); }
+  .item-card .front-text{ font-size:15px;font-weight:700;margin:10px 0 8px; color:var(--ink); }
+  .item-card .back-preview{
+    font-size:12.5px;color:var(--ink-soft);margin:0;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .mastered-badge{
+    display:inline-flex; align-items:center; gap:5px;
+    margin-top:10px; font-size:11px;font-weight:800;
+    color:#fff;background:var(--easy);padding:3px 10px;border-radius:999px;
+  }
+  .mastered-badge svg{ width:11px;height:11px; }
+
+  /* ---------- MODALS / OVERLAY ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(22,38,61,0.45);
+    backdrop-filter:blur(2px);
+    display:flex;align-items:center;justify-content:center;
+    z-index:60;padding:20px;
+    animation:overlay-in .2s ease;
+  }
+  @keyframes overlay-in{ from{opacity:0;} to{opacity:1;} }
+  .modal{
+    background:var(--surface); border-radius:22px; max-width:480px;width:100%; padding:28px;
+    box-shadow:0 30px 70px rgba(22,38,61,0.3);
+    animation:modal-in .25s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes modal-in{ from{opacity:0; transform:translateY(14px) scale(.98);} to{opacity:1; transform:translateY(0) scale(1);} }
+  .modal h3{ margin:0 0 4px; font-size:20px; }
+  .modal-section{ margin-bottom:16px; }
+  .modal-section .label{ font-size:11px;font-weight:800;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px; }
+  .modal-actions{ display:flex;justify-content:flex-end;gap:10px;margin-top:8px; }
+
+  /* ---------- FLASHCARDS PAGE ---------- */
+  .flash-wrap{ display:flex;flex-direction:column;align-items:center;gap:24px; }
+  .flash-progress{ font-size:13.5px;color:var(--ink-soft);font-weight:700; }
+  .flash-deck-filter{ display:flex;gap:8px;flex-wrap:wrap;justify-content:center; }
+  .flashcard-stage{ width:100%;max-width:500px;height:310px;perspective:1400px; }
+  .flashcard{
+    width:100%;height:100%;position:relative;transform-style:preserve-3d;
+    transition:transform .6s cubic-bezier(.34,1.4,.4,1);
+    cursor:pointer;
+  }
+  .flashcard.flipped{ transform:rotateY(180deg); }
+  .flash-face{
+    position:absolute;inset:0;backface-visibility:hidden;border-radius:26px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:30px;box-shadow:var(--shadow-lg);
+  }
+  .flash-face.front{ background:var(--surface); border:1.5px solid var(--line); }
+  .flash-face.back{
+    background:linear-gradient(135deg, #16263D, #1F4A5F);
+    color:#fff;
+    transform:rotateY(180deg);
+  }
+  .flash-face .eyebrow{
+    font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    margin-bottom:16px;opacity:.55;
+  }
+  .flash-face .face-text{ font-size:21px;font-weight:700;line-height:1.45; font-family:'Baloo 2',sans-serif; }
+  .flash-face .tag{ position:absolute;top:18px;left:18px; }
+  .flash-hint{ position:absolute;bottom:16px;font-size:12px;opacity:.5;font-weight:600; display:flex; align-items:center; gap:5px;}
+  .flash-hint svg{ width:13px;height:13px; }
+
+  .rating-row{ display:flex;gap:10px;flex-wrap:wrap;justify-content:center; }
+  .rating-btn{
+    border:1.5px solid var(--line); padding:11px 20px; border-radius:var(--radius-sm);
+    font-weight:700;font-size:13.5px; cursor:pointer;font-family:inherit;
+    background:var(--surface);color:var(--ink);
+    display:inline-flex;align-items:center;gap:7px;
+    transition:all .15s ease;
+  }
+  .rating-btn svg{ width:16px;height:16px; }
+  .rating-btn.easy:hover{ background:var(--easy);color:#fff;border-color:var(--easy); transform:translateY(-2px); }
+  .rating-btn.medium:hover{ background:var(--medium);color:#fff;border-color:var(--medium); transform:translateY(-2px); }
+  .rating-btn.hard:hover{ background:var(--hard);color:#fff;border-color:var(--hard); transform:translateY(-2px); }
+  .rating-btn.mastered{ background:linear-gradient(135deg, var(--teal), #20D6BE); color:#fff; border:none; }
+  .rating-btn.mastered:hover{ transform:translateY(-2px); box-shadow:var(--shadow-md); }
+  .deck-empty{ text-align:center;padding:60px 20px; }
+  .deck-empty .big-icon{ width:56px;height:56px;margin:0 auto 16px;color:var(--teal); }
+  .deck-empty .big-icon svg{ width:100%;height:100%; }
+  .stat-pills{ display:flex;gap:10px;flex-wrap:wrap;justify-content:center; }
+  .stat-pill{ font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface); }
+  .stat-pill.m{ color:var(--teal); border-color:#BCEEE3; }
+
+  /* ---------- TOASTS ---------- */
+  #toastRoot{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center;
+    pointer-events:none; width:100%; padding:0 16px;
+  }
+  .toast{
+    background:var(--ink);color:#fff;padding:13px 22px;border-radius:var(--radius-sm);
+    font-size:14px;font-weight:600; box-shadow:var(--shadow-lg);
+    display:flex;align-items:center;gap:12px;
+    animation: toast-in .3s cubic-bezier(.2,.8,.3,1) forwards;
+    pointer-events:auto; max-width:420px;
+  }
+  .toast.success{ background:linear-gradient(135deg, #149A88, var(--teal)); }
+  .toast.danger{ background:linear-gradient(135deg, #D1503A, var(--hard)); }
+  .toast .toast-action{
+    background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.4);
+    color:inherit;border-radius:8px;padding:5px 12px; font-size:12.5px;font-weight:700;
+    cursor:pointer;font-family:inherit; flex-shrink:0;
+  }
+  .toast.fade-out{ animation: toast-out .3s ease forwards; }
+  @keyframes toast-in{ from{opacity:0;transform:translateY(14px) scale(.96);} to{opacity:1;transform:translateY(0) scale(1);} }
+  @keyframes toast-out{ from{opacity:1;transform:translateY(0);} to{opacity:0;transform:translateY(10px);} }
+
+  /* ---------- CONFETTI ---------- */
+  #confettiRoot{ position:fixed; inset:0; pointer-events:none; z-index:200; overflow:hidden; }
+  .confetti-piece{ position:absolute; width:9px;height:9px;border-radius:3px; animation: confetti-pop 1s ease-out forwards; }
+  @keyframes confetti-pop{
+    0%{ transform:translate(0,0) rotate(0deg) scale(1); opacity:1; }
+    100%{ transform:translate(var(--x), var(--y)) rotate(var(--rot)) scale(.4); opacity:0; }
+  }
+  .mastered-flash{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.6);
+    background:linear-gradient(135deg, var(--teal), #20D6BE); color:#fff;
+    padding:18px 30px; border-radius:20px; font-family:'Baloo 2',sans-serif;
+    font-size:20px; font-weight:700; box-shadow:0 24px 60px rgba(20,154,136,0.4);
+    z-index:201; display:flex; align-items:center; gap:10px;
+    animation: mastered-pop 1.1s cubic-bezier(.3,1.4,.4,1) forwards;
+    pointer-events:none;
+  }
+  .mastered-flash svg{ width:26px;height:26px; }
+  @keyframes mastered-pop{
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(0.5); }
+    18%{ opacity:1; transform:translate(-50%,-50%) scale(1.08); }
+    30%{ transform:translate(-50%,-50%) scale(1); }
+    78%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+    100%{ opacity:0; transform:translate(-50%,-58%) scale(.96); }
+  }
+
+  ::selection{ background:var(--accent-soft); color:var(--ink); }
+
+  @media (max-width: 880px){
+    .stat-grid{ grid-template-columns:repeat(2,1fr); }
+    .dash-row{ grid-template-columns:1fr; }
+    .notes-layout{ grid-template-columns:1fr; }
+  }
+  @media (max-width: 700px){
+    .topbar{ padding:14px 16px; }
+    .brand-name{ font-size:18px; }
+    main{ padding:20px 16px 100px; }
+    nav.tabs{
+      position:fixed; bottom:14px; left:50%; transform:translateX(-50%);
+      width:calc(100% - 28px); max-width:460px;
+      justify-content:space-around;
+      padding:7px; border-radius:20px; box-shadow:var(--shadow-lg);
+      z-index:90;
+    }
+    nav.tabs button{ flex:1; flex-direction:column; gap:3px; padding:9px 6px; font-size:10.5px; }
+    nav.tabs button svg{ width:19px;height:19px; }
+    .greeting-card{ padding:24px 20px; }
+    .greeting-card h1{ font-size:22px; }
+    .page-title{ font-size:24px; }
+    .streak-pill{ padding:6px 10px; font-size:12px; }
+  }
+  @media (max-width: 480px){
+    .stat-grid{ grid-template-columns:1fr 1fr; }
+    .flashcard-stage{ height:280px; }
+    .flash-face .face-text{ font-size:18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+    </div>
+    <div class="brand-name display">Study<span>Spark</span></div>
+  </div>
+  <nav class="tabs" id="tabNav">
+    <button data-page="dashboard"><svg class="icon" viewBox="0 0 24 24"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9 20v-6h6v6"/></svg><span class="nav-label">Home</span></button>
+    <button data-page="notes"><svg class="icon" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M16 4v3h3"/><path d="M8 11h8M8 15h5"/></svg><span class="nav-label">Notes</span></button>
+    <button data-page="items"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/></svg><span class="nav-label">Study Items</span></button>
+    <button data-page="flash"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="2" transform="rotate(-6 9.5 12)"/><rect x="7" y="4" width="13" height="14" rx="2"/></svg><span class="nav-label">Flashcards</span></button>
+  </nav>
+  <div class="streak-pill" id="topStreakPill"></div>
+</div>
+
+<main id="app"></main>
+<div id="toastRoot"></div>
+<div id="confettiRoot"></div>
+
+<script>
+/* ---------------- ICONS ---------------- */
+const ICN = {
+  flame: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 2c1 3-2 4-2 7a4 4 0 0 0 8 0c0-1-.5-2-1-3 2 1 3 3 3 6a6 6 0 0 1-12 0c0-4 2-5 4-10z"/></svg>`,
+  trophy: `<svg class="icon" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 5H4v2a4 4 0 0 0 4 4M16 5h4v2a4 4 0 0 1-4 4"/><path d="M12 13v3M9 20h6M10 17h4v3h-4z"/></svg>`,
+  stack: `<svg class="icon" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5z"/><path d="m3 13 9 5 9-5"/></svg>`,
+  target: `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8" fill="currentColor"/></svg>`,
+  sparkle: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 3l1.6 4.7L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.3z"/><path d="M19 14l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>`,
+  search: `<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>`,
+  plus: `<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>`,
+  trash: `<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13"/></svg>`,
+  edit: `<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>`,
+  bolt: `<svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>`,
+  arrow: `<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
+  check: `<svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>`,
+  flip: `<svg viewBox="0 0 24 24"><path d="M7 7h10v4M17 17H7v-4"/><path d="m4 11 3-4 3 4M20 13l-3 4-3-4"/></svg>`,
+  notebook: `<svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M16 4v3h3"/><path d="M8 11h8M8 15h5"/></svg>`,
+};
+
+/* ---------------- STATE ---------------- */
+let state = {
+  page: 'dashboard',
+  selectedNoteId: null,
+  editing: false,
+  streak: 6,
+  todayGoal: 10,
+  todayReviewed: 0,
+  notes: [
+    { id:'n1', subject:'Biology', title:'Cell Organelles',
+      body:`Mitochondria are the powerhouse of the cell — they produce ATP through cellular respiration.
+
+The nucleus contains the cell's DNA and controls gene expression.
+
+Ribosomes are responsible for protein synthesis, reading mRNA to build polypeptide chains.
+
+The endoplasmic reticulum comes in two types: rough ER (studded with ribosomes, makes proteins) and smooth ER (makes lipids, detoxifies).` },
+    { id:'n2', subject:'US History', title:'Causes of the American Revolution',
+      body:`Tensions grew after the French and Indian War left Britain in debt.
+
+The Stamp Act (1765) taxed printed materials and was met with strong colonial protest — "no taxation without representation."
+
+The Boston Tea Party (1773) was a direct protest against the Tea Act, dumping 342 chests of tea into Boston Harbor.
+
+The Intolerable Acts (1774) were Britain's punishment for the Tea Party and pushed the colonies toward unity and eventual revolution.` },
+    { id:'n3', subject:'Algebra II', title:'Quadratic Formula',
+      body:`For any quadratic equation in the form ax^2 + bx + c = 0, the solutions are given by:
+
+x = (-b ± √(b² - 4ac)) / 2a
+
+The discriminant (b² - 4ac) tells you about the roots:
+- If positive, there are two real solutions.
+- If zero, there is exactly one real solution.
+- If negative, the solutions are complex (imaginary).` },
+    { id:'n4', subject:'Chemistry', title:'Types of Chemical Bonds',
+      body:`Ionic bonds form when one atom transfers electrons to another, creating oppositely charged ions that attract each other — common between metals and nonmetals (e.g. NaCl).
+
+Covalent bonds form when atoms share electrons rather than transferring them. They're typical between two nonmetals (e.g. H2O, CO2).
+
+Metallic bonds occur in metals, where electrons move freely in a "sea of electrons" shared among many atoms, which is why metals conduct electricity well.
+
+Polar covalent bonds are a middle ground — electrons are shared unequally, giving one end of the molecule a slight negative charge and the other a slight positive charge.` },
+    { id:'n5', subject:'Spanish II', title:'Preterite vs. Imperfect Tense',
+      body:`The preterite tense describes completed actions with a clear beginning and end. Example: "Comí pizza anoche" (I ate pizza last night).
+
+The imperfect tense describes ongoing, repeated, or background actions in the past, with no defined end point. Example: "Comía pizza todos los viernes" (I used to eat pizza every Friday).
+
+A helpful trick: use the imperfect for descriptions, weather, age, time, and habitual actions. Use the preterite for actions that happened once and are finished.` },
+  ],
+  studyItems: [
+    {id:'s1', subject:'Biology', front:'What is the function of mitochondria?', back:'Mitochondria are the powerhouse of the cell — they produce ATP through cellular respiration.', mastered:false, rating:null, sourceNoteId:'n1'},
+    {id:'s2', subject:'Biology', front:'What is the role of ribosomes?', back:'Ribosomes are responsible for protein synthesis, reading mRNA to build polypeptide chains.', mastered:false, rating:null, sourceNoteId:'n1'},
+    {id:'s3', subject:'US History', front:'What did the Stamp Act do, and how did colonists respond?', back:'The Stamp Act (1765) taxed printed materials and was met with strong colonial protest — "no taxation without representation."', mastered:false, rating:'hard', sourceNoteId:'n2'},
+    {id:'s4', subject:'US History', front:'What happened during the Boston Tea Party?', back:'In 1773, colonists protested the Tea Act by dumping 342 chests of tea into Boston Harbor.', mastered:true, rating:'easy', sourceNoteId:'n2'},
+    {id:'s5', subject:'Algebra II', front:'What is the quadratic formula?', back:'x = (-b ± √(b² - 4ac)) / 2a, used to solve ax² + bx + c = 0.', mastered:false, rating:null, sourceNoteId:'n3'},
+    {id:'s6', subject:'Algebra II', front:'What does a negative discriminant tell you?', back:'A negative discriminant (b² - 4ac < 0) means the quadratic has complex (imaginary) solutions, not real ones.', mastered:false, rating:'medium', sourceNoteId:'n3'},
+    {id:'s7', subject:'Chemistry', front:'What is the difference between an ionic and a covalent bond?', back:'Ionic bonds form when electrons are transferred between atoms (metal + nonmetal). Covalent bonds form when atoms share electrons (nonmetal + nonmetal).', mastered:false, rating:'hard', sourceNoteId:'n4'},
+    {id:'s8', subject:'Chemistry', front:'Why do metals conduct electricity well?', back:'Metallic bonds involve a "sea of electrons" that move freely among atoms, allowing electricity to flow through the metal.', mastered:true, rating:'easy', sourceNoteId:'n4'},
+    {id:'s9', subject:'Spanish II', front:'When do you use the imperfect tense?', back:'Use the imperfect for descriptions, weather, age, time, and habitual or repeated past actions with no clear end point.', mastered:false, rating:'hard', sourceNoteId:'n5'},
+  ],
+  noteFilter: 'All',
+  itemSearch: '',
+  itemDetailId: null,
+  saveModal: null,
+  flashDeckFilter: 'All',
+  flashIndex: 0,
+  flashFlipped: false,
+};
+
+function uid(prefix){ return prefix + Math.random().toString(36).slice(2,9); }
+
+/* ---------------- RENDER ROOT ---------------- */
+function render(){
+  document.querySelectorAll('#tabNav button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.page === state.page);
+  });
+  const app = document.getElementById('app');
+  app.classList.remove('page-fade');
+  void app.offsetWidth;
+  if(state.page === 'dashboard') app.innerHTML = renderDashboard();
+  else if(state.page === 'notes') app.innerHTML = renderNotesPage();
+  else if(state.page === 'items') app.innerHTML = renderItemsPage();
+  else app.innerHTML = renderFlashPage();
+  app.classList.add('page-fade');
+  attachHandlers();
+}
+
+document.getElementById('tabNav').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-page]');
+  if(!btn) return;
+  state.page = btn.dataset.page;
+  state.editing = false;
+  if(state.page==='flash'){ state.flashIndex = 0; state.flashFlipped = false; }
+  render();
+});
+
+/* ---------------- TOASTS ---------------- */
+function showToast(message, opts={}){
+  const root = document.getElementById('toastRoot');
+  const el = document.createElement('div');
+  el.className = 'toast' + (opts.type ? ' '+opts.type : '');
+  const span = document.createElement('span');
+  span.textContent = message;
+  el.appendChild(span);
+  if(opts.actionLabel && typeof opts.onAction === 'function'){
+    const btn = document.createElement('button');
+    btn.className = 'toast-action';
+    btn.textContent = opts.actionLabel;
+    btn.addEventListener('click', ()=>{ opts.onAction(); dismiss(); });
+    el.appendChild(btn);
+  }
+  root.appendChild(el);
+  let dismissed = false;
+  function dismiss(){
+    if(dismissed) return; dismissed = true;
+    el.classList.add('fade-out');
+    setTimeout(()=> el.remove(), 280);
+  }
+  setTimeout(dismiss, opts.duration || 3200);
+}
+
+/* ---------------- CELEBRATION ---------------- */
+function celebrateMastered(){
+  const root = document.getElementById('confettiRoot');
+  const colors = ['#2F6FED','#15B8A6','#FF8A3D','#FFD166','#1FB88B'];
+  for(let i=0;i<28;i++){
+    const piece = document.createElement('span');
+    piece.className = 'confetti-piece';
+    const angle = Math.random()*360;
+    const dist = 90 + Math.random()*150;
+    const x = Math.cos(angle*Math.PI/180)*dist;
+    const y = Math.sin(angle*Math.PI/180)*dist - 40;
+    piece.style.setProperty('--x', x+'px');
+    piece.style.setProperty('--y', y+'px');
+    piece.style.setProperty('--rot', (Math.random()*360)+'deg');
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.left = (45 + Math.random()*10) + '%';
+    piece.style.top = '45%';
+    root.appendChild(piece);
+    setTimeout(()=> piece.remove(), 1100);
+  }
+  const flash = document.createElement('div');
+  flash.className = 'mastered-flash';
+  flash.innerHTML = `${ICN.trophy.replace('class="icon"','')} Mastered!`;
+  document.body.appendChild(flash);
+  setTimeout(()=> flash.remove(), 1150);
+}
+
+/* ---------------- CROSS-PAGE NAVIGATION ---------------- */
+function goToItemsForSubject(subject){
+  state.page = 'items'; state.itemSearch = subject || ''; state.itemDetailId = null; render();
+}
+function goToFlashcardsForSubject(subject){
+  state.page = 'flash'; state.flashDeckFilter = subject || 'All';
+  state.flashIndex = 0; state.flashFlipped = false; state.itemDetailId = null; render();
+}
+function goToNewNote(){
+  state.page = 'notes'; state.selectedNoteId = null; state.editing = true; render();
+}
+
+/* ---------------- DASHBOARD ---------------- */
+function getGreeting(){
+  const h = new Date().getHours();
+  if(h < 12) return 'Good morning';
+  if(h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+let currentTipAction = null;
+
+function buildAiTip(){
+  const active = state.studyItems.filter(i=>!i.mastered);
+  const mastered = state.studyItems.filter(i=>i.mastered);
+  const hardCounts = {};
+  active.forEach(i=>{ if(i.rating==='hard') hardCounts[i.subject] = (hardCounts[i.subject]||0)+1; });
+  let hardSubject = null, hardMax = 0;
+  Object.entries(hardCounts).forEach(([subj,count])=>{ if(count>hardMax){ hardMax=count; hardSubject=subj; } });
+
+  if(hardSubject){
+    return {
+      message: `You've marked ${hardMax} ${hardSubject} card${hardMax===1?'':'s'} as Hard. A focused 10-minute review of just ${hardSubject} tonight will help it stick before it fades.`,
+      ctaLabel: `Review ${hardSubject} cards`,
+      ctaAction: ()=> goToFlashcardsForSubject(hardSubject)
+    };
+  }
+  if(active.length >= state.todayGoal){
+    return {
+      message: `You have ${active.length} cards ready to review — that's more than today's goal of ${state.todayGoal}. Knock out a quick round now while your memory's fresh.`,
+      ctaLabel: 'Start reviewing',
+      ctaAction: ()=> goToFlashcardsForSubject('All')
+    };
+  }
+  if(active.length > 0){
+    return {
+      message: `You're ${Math.max(state.todayGoal - state.todayReviewed,0)} cards away from today's goal. A short ${Math.ceil(active.length/2)}-card session would get you most of the way there.`,
+      ctaLabel: 'Start reviewing',
+      ctaAction: ()=> goToFlashcardsForSubject('All')
+    };
+  }
+  if(mastered.length > 0){
+    return {
+      message: `Nice work — you've mastered ${mastered.length} card${mastered.length===1?'':'s'} already! Open a note and save a few new study items to keep your deck growing.`,
+      ctaLabel: 'Add a study item',
+      ctaAction: ()=> goToNewNote()
+    };
+  }
+  return {
+    message: `Ready to get started? Open a note and tap "Save as Study Item" to build your first flashcard.`,
+    ctaLabel: 'Create your first note',
+    ctaAction: ()=> goToNewNote()
+  };
+}
+
+function renderDashboard(){
+  const active = state.studyItems.filter(i=>!i.mastered);
+  const masteredCount = state.studyItems.filter(i=>i.mastered).length;
+  const goalPct = Math.min(100, Math.round((state.todayReviewed / state.todayGoal) * 100));
+  const circumference = 2 * Math.PI * 14.5;
+  const dashOffset = circumference * (1 - goalPct/100);
+  const tip = buildAiTip();
+  currentTipAction = tip.ctaAction;
+
+  return `
+    <div class="greeting-card page-fade">
+      <h1 class="display">${getGreeting()}! 👋</h1>
+      <p>You have <strong>${active.length}</strong> card${active.length===1?'':'s'} ready to review today. Let's keep that ${state.streak}-day streak alive.</p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon flame">${ICN.flame}</div>
+        <div class="stat-num">${state.streak}</div>
+        <div class="stat-label">Day study streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon trophy">${ICN.trophy}</div>
+        <div class="stat-num">${masteredCount}</div>
+        <div class="stat-label">Cards mastered</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stack">${ICN.stack}</div>
+        <div class="stat-num">${active.length}</div>
+        <div class="stat-label">Ready to review</div>
+      </div>
+      <div class="stat-card">
+        <div class="goal-ring-wrap">
+          <div class="goal-ring">
+            <svg viewBox="0 0 38 38">
+              <circle class="goal-ring-track" cx="19" cy="19" r="14.5"></circle>
+              <circle class="goal-ring-fill" cx="19" cy="19" r="14.5" stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}"></circle>
+            </svg>
+          </div>
+          <div>
+            <div class="stat-num" style="font-size:20px;">${state.todayReviewed}/${state.todayGoal}</div>
+          </div>
+        </div>
+        <div class="stat-label" style="margin-top:10px;">Today's study goal</div>
+      </div>
+    </div>
+
+    <div class="dash-row">
+      <div class="ai-tip-card">
+        <span class="ai-tip-badge">${ICN.sparkle} AI Study Tip</span>
+        <p class="ai-tip-text">${escapeHtml(tip.message)}</p>
+        <button class="btn btn-primary" id="btnTipAction">${escapeHtml(tip.ctaLabel)} ${ICN.arrow}</button>
+      </div>
+      <div class="panel">
+        <h3>${ICN.bolt} Jump back in</h3>
+        <p class="panel-sub">Pick up where you left off.</p>
+        <div class="quick-actions">
+          <button class="quick-action" id="qaFlash">
+            <div class="qa-icon" style="background:var(--blue-soft);color:var(--blue);">${ICN.flip}</div>
+            <div class="qa-text"><strong>Review flashcards</strong><span>${active.length} cards in the active deck</span></div>
+          </button>
+          <button class="quick-action" id="qaNote">
+            <div class="qa-icon" style="background:var(--accent-soft);color:var(--accent-deep);">${ICN.plus}</div>
+            <div class="qa-text"><strong>Create a new note</strong><span>Capture today's lesson</span></div>
+          </button>
+          <button class="quick-action" id="qaItems">
+            <div class="qa-icon" style="background:var(--teal-soft);color:var(--teal);">${ICN.stack}</div>
+            <div class="qa-text"><strong>Browse study items</strong><span>${state.studyItems.length} total saved</span></div>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------------- NOTES PAGE ---------------- */
+function getSubjects(){
+  const subs = new Set(state.notes.map(n=>n.subject));
+  return ['All', ...Array.from(subs)];
+}
+
+function renderNotesPage(){
+  const subjects = getSubjects();
+  const filtered = state.notes.filter(n => state.noteFilter==='All' || n.subject===state.noteFilter);
+  const selected = state.notes.find(n=>n.id===state.selectedNoteId);
+
+  let listHtml = `
+    <div class="subject-filter">
+      ${subjects.map(s=>`<button class="chip ${state.noteFilter===s?'active':''}" data-filter="${escapeAttr(s)}">${escapeHtml(s)}</button>`).join('')}
+    </div>
+    <div class="note-list">
+      ${filtered.length ? filtered.map(n=>{
+        const count = state.studyItems.filter(it=>it.sourceNoteId===n.id).length;
+        return `
+        <div class="note-card ${n.id===state.selectedNoteId?'selected':''}" data-note="${n.id}">
+          <span class="tag">${escapeHtml(n.subject)}</span>
+          ${count>0 ? `<span class="item-count-badge">${count} item${count===1?'':'s'}</span>` : ''}
+          <h4>${escapeHtml(n.title)}</h4>
+          <p>${escapeHtml(n.body)}</p>
+        </div>
+      `}).join('') : `<p style="color:var(--ink-soft);font-size:13px;">No notes in this subject yet.</p>`}
+    </div>
+  `;
+
+  let editorHtml;
+  if(state.editing){
+    const n = selected || {id:null, title:'', subject:'', body:''};
+    editorHtml = `
+      <div class="note-editor">
+        <div class="field-row">
+          <div class="field">
+            <label>Title</label>
+            <input type="text" id="editTitle" value="${escapeAttr(n.title)}" placeholder="e.g. Photosynthesis Basics">
+          </div>
+          <div class="field">
+            <label>Class / Subject</label>
+            <input type="text" id="editSubject" value="${escapeAttr(n.subject)}" placeholder="e.g. Biology" list="subjectList">
+            <datalist id="subjectList">${getSubjects().filter(s=>s!=='All').map(s=>`<option value="${escapeAttr(s)}">`).join('')}</datalist>
+          </div>
+        </div>
+        <div class="field">
+          <label>Note</label>
+          <textarea id="editBody" placeholder="Write your note here...">${escapeHtml(n.body)}</textarea>
+        </div>
+        <div class="hint-banner" style="margin-top:16px;">
+          ${ICN.bolt}
+          <span><strong>Tip:</strong> highlight any part of your note above, then click "Save as Study Item" to turn it into a flashcard automatically. Don't highlight anything if you'd rather write the question and answer yourself.</span>
+        </div>
+        <div class="editor-actions">
+          <div class="left"><button class="btn btn-accent" id="btnSaveAsStudyItem">${ICN.bolt} Save as Study Item</button></div>
+          <div class="left">
+            <button class="btn btn-ghost" id="btnCancelEdit">Cancel</button>
+            <button class="btn btn-primary" id="btnSaveNote">Save Note</button>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if(selected){
+    editorHtml = `
+      <div class="note-editor">
+        <span class="tag" style="margin-bottom:12px;display:inline-block;">${escapeHtml(selected.subject)}</span>
+        <h2 style="margin:0 0 14px;">${escapeHtml(selected.title)}</h2>
+        <div class="hint-banner">
+          ${ICN.bolt}
+          <span><strong>Tip:</strong> highlight any sentence below, then click "Save as Study Item" — the highlighted text fills in the answer automatically.</span>
+        </div>
+        <div class="modal-section content" id="noteBodyView" style="user-select:text;">${escapeHtml(selected.body)}</div>
+        <div class="editor-actions">
+          <div class="left"><button class="btn btn-accent" id="btnSaveAsStudyItem">${ICN.bolt} Save as Study Item</button></div>
+          <div class="left">
+            <button class="btn btn-ghost" id="btnDeleteNote">${ICN.trash} Delete</button>
+            <button class="btn btn-primary" id="btnEditNote">${ICN.edit} Edit Note</button>
+          </div>
+        </div>
+        <div class="link-row">
+          <button class="btn-link" id="btnGoItemsFromNote">${ICN.stack} View ${escapeHtml(selected.subject)} study items</button>
+          <button class="btn-link" id="btnGoFlashFromNote">${ICN.flip} Practice ${escapeHtml(selected.subject)} flashcards</button>
+        </div>
+      </div>
+    `;
+  } else {
+    editorHtml = `
+      <div class="note-editor">
+        <div class="empty-state">
+          <div class="big-icon">${ICN.notebook}</div>
+          <p>Select a note on the left, or create a new one to get started.</p>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title display">Notes</h1>
+        <p class="page-sub">Capture what you're learning, organized by class.</p>
+      </div>
+      <button class="btn btn-accent" id="btnNewNote">${ICN.plus} New Note</button>
+    </div>
+    <div class="notes-layout">
+      <div>${listHtml}</div>
+      <div>${editorHtml}</div>
+    </div>
+  `;
+}
+
+/* ---------------- STUDY ITEMS PAGE ---------------- */
+function renderItemsPage(){
+  const q = state.itemSearch.trim().toLowerCase();
+  const filtered = state.studyItems.filter(it=>{
+    if(!q) return true;
+    return it.front.toLowerCase().includes(q) || it.back.toLowerCase().includes(q) || it.subject.toLowerCase().includes(q);
+  });
+
+  const detail = state.itemDetailId ? state.studyItems.find(i=>i.id===state.itemDetailId) : null;
+
+  let emptyHtml;
+  if(state.studyItems.length === 0){
+    emptyHtml = `<div class="empty-state"><div class="big-icon">${ICN.stack}</div><p>You don't have any study items yet. Open a note and click "Save as Study Item" to create your first one.</p></div>`;
+  } else {
+    emptyHtml = `<div class="empty-state"><div class="big-icon">${ICN.search}</div><p>No study items match "${escapeHtml(state.itemSearch)}". Try a different search term.</p></div>`;
+  }
+
+  return `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title display">Study Items</h1>
+        <p class="page-sub">Browse everything you've turned into a study item.</p>
+      </div>
+    </div>
+    <div class="search-row">
+      ${ICN.search}
+      <input type="text" id="itemSearchInput" placeholder="Search by term, answer, or subject..." value="${escapeAttr(state.itemSearch)}">
+    </div>
+    ${filtered.length ? `
+      <div class="grid-items">
+        ${filtered.map(it=>`
+          <div class="item-card" data-item="${it.id}">
+            <span class="tag">${escapeHtml(it.subject)}</span>
+            <p class="front-text">${escapeHtml(it.front)}</p>
+            <p class="back-preview">${escapeHtml(it.back)}</p>
+            ${it.mastered ? `<span class="mastered-badge">${ICN.check} Mastered</span>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    ` : emptyHtml}
+    ${detail ? `
+      <div class="overlay" id="itemOverlay">
+        <div class="modal">
+          <span class="tag">${escapeHtml(detail.subject)}</span>
+          <h3 style="margin-top:10px;">Study Item</h3>
+          <div class="modal-section">
+            <div class="label">Front</div>
+            <div class="modal-section content">${escapeHtml(detail.front)}</div>
+          </div>
+          <div class="modal-section">
+            <div class="label">Back</div>
+            <div class="modal-section content">${escapeHtml(detail.back)}</div>
+          </div>
+          ${detail.mastered ? `<span class="mastered-badge">${ICN.check} Mastered</span>` : `<button class="btn-link" id="btnPracticeFromDetail">${ICN.flip} Practice this card in Flashcards</button>`}
+          <div class="modal-actions">
+            <button class="btn btn-ghost" id="btnDeleteItem">${ICN.trash} Delete</button>
+            <button class="btn btn-primary" id="btnCloseDetail">Close</button>
+          </div>
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
+
+/* ---------------- FLASHCARDS PAGE ---------------- */
+function getActiveDeck(){
+  return state.studyItems.filter(it=>{
+    if(it.mastered) return false;
+    if(state.flashDeckFilter!=='All' && it.subject!==state.flashDeckFilter) return false;
+    return true;
+  });
+}
+
+function renderFlashPage(){
+  const subjects = getSubjects();
+  const deck = getActiveDeck();
+  if(state.flashIndex >= deck.length) state.flashIndex = 0;
+  const card = deck[state.flashIndex];
+  const masteredCount = state.studyItems.filter(i=>i.mastered).length;
+
+  return `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title display">Flashcards</h1>
+        <p class="page-sub">Flip, rate, and master your study items one card at a time.</p>
+      </div>
+    </div>
+    <div class="flash-wrap">
+      <div class="flash-deck-filter">
+        ${subjects.map(s=>`<button class="chip ${state.flashDeckFilter===s?'active':''}" data-flashfilter="${escapeAttr(s)}">${escapeHtml(s)}</button>`).join('')}
+      </div>
+      ${card ? `
+        <div class="flash-progress">Card ${state.flashIndex+1} of ${deck.length}</div>
+        <div class="flashcard-stage">
+          <div class="flashcard ${state.flashFlipped?'flipped':''}" id="flashCard">
+            <div class="flash-face front">
+              <span class="tag">${escapeHtml(card.subject)}</span>
+              <div class="eyebrow">Front</div>
+              <div class="face-text">${escapeHtml(card.front)}</div>
+              <div class="flash-hint">${ICN.flip} Tap to flip</div>
+            </div>
+            <div class="flash-face back">
+              <div class="eyebrow">Back</div>
+              <div class="face-text">${escapeHtml(card.back)}</div>
+              <div class="flash-hint">${ICN.flip} Tap to flip back</div>
+            </div>
+          </div>
+        </div>
+        <div class="rating-row">
+          <button class="rating-btn easy" data-rate="easy">😎 Easy</button>
+          <button class="rating-btn medium" data-rate="medium">🙂 Medium</button>
+          <button class="rating-btn hard" data-rate="hard">😖 Hard</button>
+          <button class="rating-btn mastered" data-rate="mastered">${ICN.check} Mark as Mastered</button>
+        </div>
+        <div class="stat-pills">
+          <span class="stat-pill">${deck.length} active</span>
+          <span class="stat-pill m">${masteredCount} mastered</span>
+        </div>
+      ` : `
+        <div class="deck-empty">
+          <div class="big-icon">${ICN.trophy}</div>
+          <h3 class="display">All caught up!</h3>
+          <p style="color:var(--ink-soft);">There are no active cards in this deck — everything is either mastered or there's nothing here yet.</p>
+        </div>
+        <div class="stat-pills">
+          <span class="stat-pill">${deck.length} active</span>
+          <span class="stat-pill m">${masteredCount} mastered</span>
+        </div>
+      `}
+    </div>
+  `;
+}
+
+/* ---------------- HANDLERS ---------------- */
+function attachHandlers(){
+  // DASHBOARD
+  const btnTipAction = document.getElementById('btnTipAction');
+  if(btnTipAction) btnTipAction.addEventListener('click', ()=>{ if(currentTipAction) currentTipAction(); });
+  const qaFlash = document.getElementById('qaFlash');
+  if(qaFlash) qaFlash.addEventListener('click', ()=> goToFlashcardsForSubject('All'));
+  const qaNote = document.getElementById('qaNote');
+  if(qaNote) qaNote.addEventListener('click', goToNewNote);
+  const qaItems = document.getElementById('qaItems');
+  if(qaItems) qaItems.addEventListener('click', ()=> goToItemsForSubject(''));
+
+  // NOTES
+  document.querySelectorAll('[data-filter]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      state.noteFilter = el.dataset.filter; state.selectedNoteId = null; state.editing = false; render();
+    });
+  });
+  document.querySelectorAll('[data-note]').forEach(el=>{
+    el.addEventListener('click', ()=>{ state.selectedNoteId = el.dataset.note; state.editing = false; render(); });
+  });
+  const btnNewNote = document.getElementById('btnNewNote');
+  if(btnNewNote) btnNewNote.addEventListener('click', ()=>{ state.selectedNoteId = null; state.editing = true; render(); });
+  const btnEditNote = document.getElementById('btnEditNote');
+  if(btnEditNote) btnEditNote.addEventListener('click', ()=>{ state.editing = true; render(); });
+  const btnCancelEdit = document.getElementById('btnCancelEdit');
+  if(btnCancelEdit) btnCancelEdit.addEventListener('click', ()=>{ state.editing = false; render(); });
+  const btnDeleteNote = document.getElementById('btnDeleteNote');
+  if(btnDeleteNote) btnDeleteNote.addEventListener('click', ()=>{
+    const n = state.notes.find(n=>n.id===state.selectedNoteId);
+    if(!n) return;
+    if(!confirm(`Delete "${n.title}"? This can't be undone.`)) return;
+    state.notes = state.notes.filter(n=>n.id!==state.selectedNoteId);
+    state.selectedNoteId = null;
+    render();
+    showToast('Note deleted.', {type:'danger'});
+  });
+  const btnSaveNote = document.getElementById('btnSaveNote');
+  if(btnSaveNote) btnSaveNote.addEventListener('click', ()=>{
+    const title = document.getElementById('editTitle').value.trim() || 'Untitled Note';
+    const subject = document.getElementById('editSubject').value.trim() || 'General';
+    const body = document.getElementById('editBody').value;
+    const isNew = !state.selectedNoteId;
+    if(state.selectedNoteId){
+      const n = state.notes.find(n=>n.id===state.selectedNoteId);
+      n.title = title; n.subject = subject; n.body = body;
+    } else {
+      const newNote = {id: uid('n'), title, subject, body};
+      state.notes.unshift(newNote);
+      state.selectedNoteId = newNote.id;
+    }
+    state.editing = false;
+    render();
+    showToast(isNew ? 'Note created!' : 'Note saved!', {type:'success'});
+  });
+  const btnGoItemsFromNote = document.getElementById('btnGoItemsFromNote');
+  if(btnGoItemsFromNote) btnGoItemsFromNote.addEventListener('click', ()=>{
+    const n = state.notes.find(n=>n.id===state.selectedNoteId);
+    goToItemsForSubject(n ? n.subject : '');
+  });
+  const btnGoFlashFromNote = document.getElementById('btnGoFlashFromNote');
+  if(btnGoFlashFromNote) btnGoFlashFromNote.addEventListener('click', ()=>{
+    const n = state.notes.find(n=>n.id===state.selectedNoteId);
+    goToFlashcardsForSubject(n ? n.subject : 'All');
+  });
+  const btnSaveAsStudy = document.getElementById('btnSaveAsStudyItem');
+  if(btnSaveAsStudy) btnSaveAsStudy.addEventListener('click', ()=>{
+    let selectedText = '';
+    if(state.editing){
+      const ta = document.getElementById('editBody');
+      if(ta && ta.selectionStart !== ta.selectionEnd){
+        selectedText = ta.value.substring(ta.selectionStart, ta.selectionEnd).trim();
+      }
+    } else {
+      const sel = window.getSelection();
+      if(sel && sel.toString().trim().length > 0) selectedText = sel.toString().trim();
+    }
+    const subject = state.editing
+      ? (document.getElementById('editSubject').value.trim() || 'General')
+      : (state.notes.find(n=>n.id===state.selectedNoteId)?.subject || 'General');
+    const noteId = state.selectedNoteId;
+    openSaveModal(selectedText, noteId, subject);
+  });
+
+  // ITEMS
+  const search = document.getElementById('itemSearchInput');
+  if(search) search.addEventListener('input', (e)=>{
+    const caret = e.target.selectionStart;
+    state.itemSearch = e.target.value;
+    render();
+    const newSearch = document.getElementById('itemSearchInput');
+    if(newSearch){ newSearch.focus(); newSearch.setSelectionRange(caret, caret); }
+  });
+  document.querySelectorAll('[data-item]').forEach(el=>{
+    el.addEventListener('click', ()=>{ state.itemDetailId = el.dataset.item; render(); });
+  });
+  const btnCloseDetail = document.getElementById('btnCloseDetail');
+  if(btnCloseDetail) btnCloseDetail.addEventListener('click', ()=>{ state.itemDetailId = null; render(); });
+  const overlay = document.getElementById('itemOverlay');
+  if(overlay) overlay.addEventListener('click', (e)=>{ if(e.target===overlay){ state.itemDetailId=null; render(); } });
+  const btnDeleteItem = document.getElementById('btnDeleteItem');
+  if(btnDeleteItem) btnDeleteItem.addEventListener('click', ()=>{
+    const it = state.studyItems.find(i=>i.id===state.itemDetailId);
+    if(!it) return;
+    if(!confirm("Delete this study item? This can't be undone.")) return;
+    state.studyItems = state.studyItems.filter(i=>i.id!==state.itemDetailId);
+    state.itemDetailId = null;
+    render();
+    showToast('Study item deleted.', {type:'danger'});
+  });
+  const btnPracticeFromDetail = document.getElementById('btnPracticeFromDetail');
+  if(btnPracticeFromDetail) btnPracticeFromDetail.addEventListener('click', ()=>{
+    const it = state.studyItems.find(i=>i.id===state.itemDetailId);
+    goToFlashcardsForSubject(it ? it.subject : 'All');
+  });
+
+  // FLASHCARDS
+  document.querySelectorAll('[data-flashfilter]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      state.flashDeckFilter = el.dataset.flashfilter;
+      state.flashIndex = 0; state.flashFlipped = false;
+      render();
+    });
+  });
+  const flashCard = document.getElementById('flashCard');
+  if(flashCard) flashCard.addEventListener('click', ()=>{ state.flashFlipped = !state.flashFlipped; render(); });
+  document.querySelectorAll('[data-rate]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const deckBefore = getActiveDeck();
+      const card = deckBefore[state.flashIndex];
+      if(!card) return;
+      const item = state.studyItems.find(i=>i.id===card.id);
+      const rating = el.dataset.rate;
+      const wasMastered = rating === 'mastered';
+      if(wasMastered){ item.mastered = true; } else { item.rating = rating; }
+      state.flashFlipped = false;
+      state.todayReviewed = Math.min(state.todayReviewed + 1, 999);
+      const deckAfter = getActiveDeck();
+      if(deckAfter.length === 0){ state.flashIndex = 0; }
+      else if(wasMastered){ if(state.flashIndex >= deckAfter.length) state.flashIndex = 0; }
+      else { state.flashIndex = (state.flashIndex + 1) % deckAfter.length; }
+      render();
+      if(wasMastered){
+        celebrateMastered();
+        showToast("Card mastered! It won't show up in the active deck again.", {type:'success'});
+      }
+    });
+  });
+
+  // SAVE MODAL
+  const saveOverlay = document.getElementById('saveOverlay');
+  if(saveOverlay){
+    saveOverlay.addEventListener('click', (e)=>{ if(e.target===saveOverlay) closeSaveModal(); });
+    document.getElementById('btnCancelSave').addEventListener('click', closeSaveModal);
+    document.getElementById('btnConfirmSave').addEventListener('click', ()=>{
+      const frontEl = document.getElementById('saveFront');
+      const backEl = document.getElementById('saveBack');
+      const front = frontEl.value.trim();
+      const back = backEl.value.trim();
+      const subject = document.getElementById('saveSubject').value.trim() || 'General';
+      const errorEl = document.getElementById('saveModalError');
+      if(!front || !back){
+        errorEl.textContent = !front && !back
+          ? 'Add both a front (question) and a back (answer) before saving.'
+          : (!front ? 'Add a front — the question or term the student will see first.' : 'Add a back — the answer to reveal after flipping.');
+        errorEl.style.display = 'block';
+        (!front ? frontEl : backEl).focus();
+        return;
+      }
+      state.studyItems.unshift({ id: uid('s'), subject, front, back, mastered:false, rating:null, sourceNoteId: state.saveModal.noteId });
+      closeSaveModal();
+      render();
+      showToast('Study item created!', { type:'success', actionLabel:'View it', onAction: ()=> goToItemsForSubject(subject) });
+    });
+  }
+}
+
+/* ---------------- SAVE-AS-STUDY-ITEM MODAL ---------------- */
+function openSaveModal(selectedText, noteId, subject){
+  state.saveModal = {selectedText, noteId, subject};
+  renderSaveModal();
+}
+function closeSaveModal(){
+  state.saveModal = null;
+  document.getElementById('saveModalRoot').innerHTML = '';
+}
+function renderSaveModal(){
+  let root = document.getElementById('saveModalRoot');
+  if(!root){ root = document.createElement('div'); root.id = 'saveModalRoot'; document.body.appendChild(root); }
+  const m = state.saveModal;
+  const sourceNote = m.noteId ? state.notes.find(n=>n.id===m.noteId) : null;
+  root.innerHTML = `
+    <div class="overlay" id="saveOverlay">
+      <div class="modal">
+        <h3>${ICN.bolt.replace('class="icon"','style="width:18px;height:18px;display:inline-block;vertical-align:-3px;"')} Save as Study Item</h3>
+        <p style="color:var(--ink-soft);font-size:13px;margin-top:2px;margin-bottom:18px;">
+          ${sourceNote ? `From your note "${escapeHtml(sourceNote.title)}". ` : ''}Turn this into a question-and-answer flashcard.
+        </p>
+        <div id="saveModalError" style="display:none;background:#FDEDEA;border:1.5px solid var(--hard);color:#C84A33;font-size:13px;font-weight:600;padding:10px 13px;border-radius:10px;margin-bottom:14px;"></div>
+        <div class="field" style="margin-bottom:14px;">
+          <label>Class / Subject</label>
+          <input type="text" id="saveSubject" value="${escapeAttr(m.subject)}">
+        </div>
+        <div class="field" style="margin-bottom:14px;">
+          <label>Front (question or term)</label>
+          <input type="text" id="saveFront" placeholder="e.g. What is the function of mitochondria?">
+        </div>
+        <div class="field">
+          <label>Back (answer)</label>
+          <textarea id="saveBack" style="min-height:110px;" placeholder="Paste or type the answer...">${escapeHtml(m.selectedText)}</textarea>
+        </div>
+        ${m.selectedText ? `<p style="font-size:12px;color:var(--teal);margin:10px 0 0;font-weight:700;">${ICN.check.replace('viewBox','style="width:12px;height:12px;display:inline-block;vertical-align:-1px;" viewBox')} Your highlighted text was added to the back automatically.</p>` : ''}
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="btnCancelSave">Cancel</button>
+          <button class="btn btn-accent" id="btnConfirmSave">Save Study Item</button>
+        </div>
+      </div>
+    </div>
+  `;
+  attachHandlers();
+  document.getElementById('saveFront').focus();
+}
+
+/* ---------------- UTIL ---------------- */
+function escapeHtml(str){
+  if(str==null) return '';
+  return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+}
+function escapeAttr(str){ return escapeHtml(str).replaceAll('"','&quot;'); }
+
+document.getElementById('topStreakPill').innerHTML = `${ICN.flame} ${state.streak}-day streak`;
+render();
+</script>
+</body>
+</html>
